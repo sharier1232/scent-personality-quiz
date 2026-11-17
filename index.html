@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>香调人格测评 · 78 题找到你的本命香</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #f6f3ee; --surface: #ffffff; --text: #1d1b17; --text2: #6b665c; --text3: #a8a294;
+    --border: rgba(29,27,23,.12); --border2: rgba(29,27,23,.22); --accent: #b4552a;
+    --radius-md: 12px; --radius-lg: 18px;
+  }
+  html, body { height: 100%; background: var(--bg); color: var(--text);
+    font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 520px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  .top-bar { padding: 22px 24px 0; flex-shrink: 0; }
+  .brand { font-size: 11px; letter-spacing: .14em; color: var(--text3); text-transform: uppercase; margin-bottom: 14px; }
+  .progress-track { height: 3px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; width: 0; transition: width .4s cubic-bezier(.4,0,.2,1); }
+
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+
+  /* 开始页 */
+  .hero { padding: 56px 28px 32px; }
+  .hero h1 { font-size: 30px; line-height: 1.3; letter-spacing: -.5px; margin-bottom: 14px; }
+  .hero p { font-size: 15px; color: var(--text2); line-height: 1.8; margin-bottom: 12px; }
+  .hero .meta { display: flex; gap: 10px; flex-wrap: wrap; margin: 22px 0 30px; }
+  .chip { font-size: 12px; color: var(--text2); border: 1px solid var(--border); border-radius: 20px; padding: 6px 13px; background: var(--surface); }
+
+  .btn { height: 52px; border: none; border-radius: var(--radius-lg); background: var(--accent); color: #fff;
+    font-size: 16px; font-weight: 600; cursor: pointer; letter-spacing: .02em; width: 100%; }
+  .btn:active { transform: scale(.985); }
+  .btn:disabled { opacity: .25; cursor: default; }
+  .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
+
+  /* 答题页 */
+  .quiz-body { flex: 1; padding: 28px 24px 24px; display: flex; flex-direction: column; }
+  .q-group { font-size: 12px; letter-spacing: .1em; color: var(--text3); margin-bottom: 10px; }
+  .q-num { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
+  .q-text { font-size: 22px; font-weight: 600; line-height: 1.45; margin-bottom: 26px; letter-spacing: -.3px; }
+  .options { display: flex; flex-direction: column; gap: 11px; flex: 1; }
+  .opt { display: flex; align-items: flex-start; gap: 14px; padding: 16px; border: 1px solid var(--border);
+    border-radius: var(--radius-lg); cursor: pointer; background: var(--surface); transition: border-color .15s, background .15s; }
+  .opt:active { transform: scale(.985); }
+  .opt.selected { border-color: var(--accent); background: #fff7f2; }
+  .opt-radio { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center; }
+  .opt.selected .opt-radio { background: var(--accent); border-color: var(--accent); }
+  .opt.selected .opt-radio::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #fff; }
+  .opt-title { font-size: 15px; line-height: 1.45; }
+  .nav { margin-top: 24px; display: flex; gap: 10px; align-items: center; }
+  .btn-back { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--text2); flex-shrink: 0; }
+  .nav .btn { flex: 1; }
+
+  /* 结果页 */
+  .result-hero { padding: 44px 24px 30px; text-align: center; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .result-icon { font-size: 52px; margin-bottom: 14px; }
+  .result-tag-label { font-size: 12px; letter-spacing: .08em; color: var(--text3); margin-bottom: 6px; }
+  .result-name { font-size: 30px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 4px; }
+  .result-en { font-size: 13px; color: var(--text3); margin-bottom: 16px; letter-spacing: .04em; }
+  .result-quote { font-size: 15px; color: var(--text2); line-height: 1.8; max-width: 320px; margin: 0 auto; font-style: italic; }
+  .result-body { padding: 26px 24px; flex: 1; }
+  .section-label { font-size: 11px; letter-spacing: .1em; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; }
+  .result-desc { font-size: 15px; color: var(--text2); line-height: 1.85; margin-bottom: 22px; }
+  .traits { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+  .trait { font-size: 13px; color: var(--text2); padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); }
+  .block { margin-bottom: 24px; }
+  .block h3 { font-size: 15px; margin-bottom: 10px; }
+  .block ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .block li { font-size: 14px; color: var(--text2); line-height: 1.6; padding-left: 16px; position: relative; }
+  .block li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .pick-type { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); padding: 14px 15px; margin-bottom: 14px; }
+  .pick-type-head { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .pick-type-icon { font-size: 20px; }
+  .pick-type-name { font-size: 15px; font-weight: 600; }
+  .pick-type-rank { font-size: 11px; color: var(--text3); margin-left: auto; }
+  .pick-arrow { font-size: 13px; color: var(--text3); transition: transform .2s; }
+  .pick-type:not(.open) .pick-arrow { transform: rotate(-90deg); }
+  .pick-body { display: none; }
+  .pick-type.open .pick-body { display: block; }
+  .pick-type-sub { font-size: 12px; color: var(--text3); margin: 8px 0; }
+  .tier-label { font-size: 12px; color: var(--text2); margin: 12px 0 7px; display: flex; gap: 8px; align-items: baseline; }
+  .tier-label .tier-range { font-size: 11px; color: var(--text3); }
+  .pick-grid { display: flex; flex-direction: column; gap: 8px; }
+  .pick-card { border: 1px solid var(--border); border-radius: 10px; padding: 11px 13px; background: var(--bg); cursor: pointer; text-align: left; font: inherit; }
+  .pick-card:hover { border-color: var(--accent); }
+  .pick-card .pc-name { font-size: 14px; font-weight: 600; }
+  .pick-card .pc-brand { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .pick-card .pc-desc { font-size: 12.5px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+  .modal-mask { position: fixed; inset: 0; background: rgba(29,27,23,.45); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
+  .modal-mask[hidden] { display: none; }
+  .modal { position: relative; background: var(--surface); border-radius: var(--radius-md); max-width: 420px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 22px 20px; }
+  .modal-close { position: absolute; top: 12px; right: 12px; border: none; background: var(--bg); width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; color: var(--text2); }
+  .modal-brand { font-size: 12px; color: var(--text3); letter-spacing: .03em; }
+  .modal-name { font-size: 18px; font-weight: 700; margin: 4px 0 6px; }
+  .modal-tier { display: inline-block; font-size: 11px; color: var(--text2); border: 1px solid var(--border); border-radius: 12px; padding: 3px 10px; margin-bottom: 12px; }
+  .modal-desc { font-size: 14px; color: var(--text2); line-height: 1.65; margin-bottom: 14px; }
+  .note-row { margin-bottom: 10px; }
+  .note-row .nr-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+  .note-row .nr-val { font-size: 13.5px; color: var(--text); line-height: 1.55; }
+  .sub-card { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); padding: 15px 16px; margin-bottom: 10px; }
+  .sub-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .sub-name { font-size: 16px; font-weight: 600; }
+  .sub-en { font-size: 12px; color: var(--text3); letter-spacing: .03em; }
+  .sub-wheel { font-size: 11px; color: var(--text3); margin-bottom: 8px; }
+  .sub-desc { font-size: 14px; color: var(--text2); line-height: 1.65; margin-bottom: 10px; }
+  .sub-notes { display: flex; flex-wrap: wrap; gap: 7px; }
+  .sub-note { font-size: 12px; color: var(--text2); padding: 5px 11px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg); }
+  .sub-alt { font-size: 13px; color: var(--text2); margin-top: 6px; }
+  .sub-alt b { color: var(--text); }
+  .bars { display: flex; flex-direction: column; gap: 9px; margin-bottom: 26px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .bar-row .b-name { width: 56px; color: var(--text2); }
+  .bar-track { flex: 1; height: 8px; background: var(--border); border-radius: 8px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 8px; }
+  .result-actions { padding: 0 24px 40px; }
+  .disclaimer { text-align: center; font-size: 12px; color: var(--text3); line-height: 1.6; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 开始页 -->
+  <section class="screen active" id="screenStart">
+    <div class="hero">
+      <div class="brand">Scent Personality Quiz</div>
+      <h1>78 道题，测出你的香调人格</h1>
+      <p>像 MBTI 测评一样，从场景、心情、性格、气味偏好、当前用香、细分侧重、生活方式、感官感受和审美想象一步步作答。答完先得到你的香调人格画像与轮盘细分定位，再看到适合你的香调方向与香水风格参考。</p>
+      <div class="meta">
+        <span class="chip">78 道单选</span>
+        <span class="chip">约 11–15 分钟</span>
+        <span class="chip">8 型 · 24 个细分侧重</span>
+        <span class="chip">无需登录 · 本地作答</span>
+      </div>
+      <button class="btn" id="btnStart">开始测评</button>
+    </div>
+  </section>
+
+  <!-- 答题页 -->
+  <section class="screen" id="screenQuiz">
+    <div class="top-bar">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="quiz-body">
+      <div class="q-group" id="qGroup"></div>
+      <div class="q-num" id="qNum"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="options"></div>
+      <div class="nav">
+        <button class="btn-back" id="btnBack" type="button">←</button>
+        <button class="btn" id="btnNext" type="button" disabled>继续</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 结果页 -->
+  <section class="screen" id="screenResult">
+    <div class="result-hero">
+      <div class="result-icon" id="resIcon"></div>
+      <div class="result-tag-label">你的香调人格是</div>
+      <div class="result-name" id="resName"></div>
+      <div class="result-en" id="resEn"></div>
+      <div class="result-quote" id="resQuote"></div>
+    </div>
+    <div class="result-body">
+      <div class="section-label">人格画像</div>
+      <div class="result-desc" id="resDesc"></div>
+      <div class="traits" id="resTraits"></div>
+
+      <div class="section-label">细分侧重 · 轮盘定位</div>
+      <div id="resSub"></div>
+
+      <div class="section-label">你的家族倾向</div>
+      <div class="bars" id="resBars"></div>
+
+      <div class="block">
+        <h3>偏好香调与原料</h3>
+        <ul id="resNotes"></ul>
+      </div>
+      <div class="block">
+        <h3>建议避雷方向</h3>
+        <ul id="resAvoid"></ul>
+      </div>
+      <div class="block">
+        <h3>按预算挑香 · 匹配度前三类型</h3>
+        <div id="resPicks"></div>
+      </div>
+    </div>
+    <div class="result-actions">
+      <button class="btn btn-ghost" id="btnRetry" type="button">重新测一次</button>
+      <div class="disclaimer">香氛仅为风格方向参考，不构成购买推荐；价格为常见正装规格参考价，随品牌、容量、渠道与活动波动；留香为大众口碑公认区间，官方一般只标注浓度（EDP/EDT/EDC），时长随肤质、季节、喷量与批次变化，气味因人而异，建议线下试香后再入手。</div>
+    </div>
+  </section>
+
+  <!-- 香氛详情弹层 -->
+  <div class="modal-mask" id="modalMask" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modalClose" type="button" aria-label="关闭">×</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const FAMILIES = ['citrus','floral','green','aquatic','woody','amber','gourmand','smoky'];
+const FAMILY_LABEL = { citrus:'柑橘', floral:'花香', green:'青绿', aquatic:'水生', woody:'木质', amber:'琥珀', gourmand:'美食', smoky:'烟熏' };
+
+// 细分侧重：参照 Michael Edwards 香气轮盘（Fresh / Floral / Amber / Woody 四大类及其子类），
+// 每个主家族下拆 3 个子类。subId 即选项里的 sub 字段。
+const SUBS = {
+  'citrus-zest': { f:'citrus', en:'Citrus Zest', zh:'清亮果皮型', desc:'直接由柠檬、香柠檬、苦橙皮撑起的尖锐清亮感，开头提神、轻快上扬。', notes:['香柠檬、柠檬、苦橙、葡萄柚皮','微苦果皮精油感','短而透亮的前调'] },
+  'citrus-neroli': { f:'citrus', en:'Neroli Citrus', zh:'橙花通透型', desc:'柑橘里揉进橙花与苦橙花，比纯果皮多一层白花的通透和优雅，干净不甜。', notes:['橙花、苦橙花、橙花油','白花与果皮交织','通透略带粉感'] },
+  'citrus-fruity': { f:'citrus', en:'Fruity Citrus', zh:'多汁果香型', desc:'偏向葡萄柚、红果等多汁果味，柑橘骨架里带甜润果肉感，年轻好接近。', notes:['葡萄柚、红果、甜橙果肉','多汁微甜的果味','轻快有活力'] },
+
+  'floral-bouquet': { f:'floral', en:'Floral Bouquet', zh:'经典花束型', desc:'玫瑰、茉莉、铃兰等多花组成的完整花束，馥郁舒展，是最正统的花香表达。', notes:['玫瑰、茉莉、铃兰、康乃馨','完整花束层次','明媚舒展'] },
+  'floral-soft': { f:'floral', en:'Soft Floral', zh:'柔粉贴肤型', desc:'鸢尾、醛香与柔雾感把花香磨得很粉很轻，贴肤温柔，像一层柔软织物。', notes:['鸢尾、紫罗兰、醛香、白麝香','粉感柔雾','贴肤含蓄'] },
+  'floral-oriental': { f:'floral', en:'Floral Oriental', zh:'花香东方型', desc:'白花、依兰叠上暖甜辛料与树脂，花香更浓艳温暖，带一点魅惑的东方感。', notes:['依兰、橙花、茉莉配香草辛料','暖甜馥郁','浪漫偏艳'] },
+
+  'green-leaf': { f:'green', en:'Green Leaf', zh:'揉碎叶片型', desc:'刚折下的枝叶、青草和无花果叶，湿润带清苦，最直观的自然青绿。', notes:['无花果叶、青草、番茄叶、绿叶','湿润叶片的清苦','自然户外感'] },
+  'green-herbal': { f:'green', en:'Aromatic Herbs', zh:'草本芳香型', desc:'鼠尾草、薰衣草、迷迭香等草药气息，靠近蕨类芳香调，干净利落偏中性。', notes:['鼠尾草、薰衣草、迷迭香、草本','药草冷感','中性利落'] },
+  'green-tea': { f:'green', en:'Tea Green', zh:'清茶草木型', desc:'绿茶、茶叶与无花果茶的清苦回甘，安静克制，带一点煮茶的温润。', notes:['绿茶、白茶、无花果茶','茶感回甘','安静低甜'] },
+
+  'aquatic-marine': { f:'aquatic', en:'Marine', zh:'海洋海盐型', desc:'海盐、海藻与矿物咸湿感，像海风扑到脸上，开阔凉冽。', notes:['海盐、海藻、矿物咸调','咸湿开阔','冷感外放'] },
+  'aquatic-ozonic': { f:'aquatic', en:'Ozonic Water', zh:'臭氧清水型', desc:'空气感、臭氧与洁净织物的味道，透明现代，像雨后开窗的清爽。', notes:['臭氧、洁净麝香、湿空气','透明空气感','现代干净'] },
+  'aquatic-lotus': { f:'aquatic', en:'Water Floral', zh:'水生花露型', desc:'莲花、睡莲与水汽白花，在水生轮廓里留一层柔润花意，凉而不冰。', notes:['莲花、睡莲、水中白花','水汽花瓣','柔润清凉'] },
+
+  'woods-creamy': { f:'woody', en:'Creamy Woods', zh:'温润木质型', desc:'檀香、雪松带来柔润奶感，贴肤温和，是好亲近的暖木质。', notes:['檀香、雪松、柔和木质','奶润贴肤','温和暖调'] },
+  'woods-dry': { f:'woody', en:'Dry Woods', zh:'干燥冷木型', desc:'香根草、干雪松与木屑，干燥冷峻有骨架，耐闻不甜。', notes:['香根草、干雪松、木屑','干燥根茎感','冷峻有骨'] },
+  'woods-mossy': { f:'woody', en:'Mossy Woods (Chypre)', zh:'苔藓西普型', desc:'橡木苔、广藿香与林地苔藓，明亮前调压在苔绿底色上，经典西普结构。', notes:['橡木苔、广藿香、苔藓林地','明暗对比','精致知性'] },
+
+  'amber-soft': { f:'amber', en:'Soft Oriental', zh:'柔东方暖香型', desc:'乳香、树脂与暖麝香轻轻裹住，比经典琥珀更轻更透，暖而不甜腻。', notes:['乳香、树脂、暖麝香','轻暖贴肤','含蓄包覆'] },
+  'amber-oriental': { f:'amber', en:'Oriental Amber', zh:'经典琥珀型', desc:'香草、劳丹脂与树脂蜜暖堆叠，浓郁包裹，是最有存在感的东方琥珀。', notes:['香草、劳丹脂、安息香、树脂','蜜暖浓郁','绵长外放'] },
+  'amber-woody': { f:'amber', en:'Woody Oriental', zh:'木质东方型', desc:'檀香、广藿香打底，再叠树脂辛料，暖里有木质纵深，深沉夜间感。', notes:['檀香、广藿香、树脂辛料','暖木交织','深沉神秘'] },
+
+  'gourmand-dessert': { f:'gourmand', en:'Dessert Gourmand', zh:'甜品甜香型', desc:'香草、焦糖、蜂蜜、可可般的甜点感，丰腴愉悦，甜感直接。', notes:['香草、焦糖、蜂蜜、奶油','甜品甜润','丰沛愉悦'] },
+  'gourmand-bean': { f:'gourmand', en:'Roasted Bean', zh:'烘焙豆香型', desc:'咖啡、零陵香豆、坚果与可可的焙烤暖香，甜里带焦香，更成熟。', notes:['咖啡、零陵香豆、坚果、可可','焙烤焦香','暖厚沉稳'] },
+  'gourmand-fruity': { f:'gourmand', en:'Fruity Gourmand', zh:'轻甜果香型', desc:'梨、桃、椰香等果汁感配少量甜料，比纯甜品轻，清新好入口。', notes:['梨、桃、椰子、果香','轻甜多汁','年轻亲和'] },
+
+  'smoky-leather': { f:'smoky', en:'Leather', zh:'皮革哑光型', desc:'皮革、麂皮与微微动物感，哑光粗犷，有使用痕迹和质感。', notes:['皮革、麂皮、桦木','哑光粗犷','个性利落'] },
+  'smoky-incense': { f:'smoky', en:'Incense', zh:'熏香树脂型', desc:'乳香、没药与熏香烟气，暗暖缭绕，带宗教感与冥想气质。', notes:['乳香、没药、熏烟','暗暖缭绕','神秘内敛'] },
+  'smoky-tobacco': { f:'smoky', en:'Tobacco & Smoke', zh:'烟草余烬型', desc:'烟草、桦木焦油与燃尽余烬的焦苦深沉，暗色有力量。', notes:['烟草、桦木焦油、余烬','焦苦深沉','老派厚重'] }
+};
+
+const TYPES = {
+  citrus: {
+    name:'清醒橙光型', en:'Bright Citrus', icon:'🍊', wheel:'Fresh · Citrus 清新—柑橘',
+    tag:'明亮、轻快、随时重启的人',
+    quote:'你不喜欢沉重的黏腻，喜欢一上来就通透、干净、让人精神一振的气息。',
+    desc:'你内核清爽直接，情绪来得快去得也快，不喜欢反复纠缠。相处时你给人的第一印象总是利落、有活力，像清晨刚剥开的果皮。你适合那种开头明亮、不拖泥带水的香：清爽的果香与柑橘调，闻起来像刚洗过的手和晒过太阳的织物，存在感轻快，不压人。',
+    traits:['性格直爽','反应快','喜欢清爽','容易腻慢香','重视第一印象','状态切换快'],
+    notes:['苦橙、柠檬、香柠檬等柑橘果皮精油','活泼的果香与微苦的果皮感','轻快上扬的前调，清新不甜腻','可选带少量草本或花香提亮'],
+    avoid:['厚重甜腻的美食调','大面积烟熏、皮革等沉重暗黑香','贴肤不动、留香过度的重琥珀']
+  },
+  floral: {
+    name:'柔瓣花语型', en:'Soft Floral', icon:'🌸', wheel:'Floral · 花香',
+    tag:'温柔、细腻、注重氛围与情绪价值的人',
+    quote:'你相信气味里的情绪价值，柔软的花瓣感能让你安定下来。',
+    desc:'你情感细腻，重视氛围和被温柔对待的感觉，审美偏浪漫。你适合花香为主的香：无论带露的白花、甜润的玫瑰，还是粉感的鸢尾，都能呼应你柔软、有共情力的一面。你的香不需要张扬，越贴近皮肤、越有花瓣层次，越像你本人。',
+    traits:['共情力强','审美浪漫','注重细节','需要被理解','情绪细腻','偏爱柔美'],
+    notes:['玫瑰、茉莉、橙花、鸢尾等花香主体','带露的青绿花瓣感与粉感柔润','可搭配少量香草或麝香贴近肌肤','层次柔和，由轻到慢自然过渡'],
+    avoid:['尖锐刺鼻的人工化工花香','过于粗糙的烟熏、皮革','辛辣灼热的重辛料堆叠']
+  },
+  green: {
+    name:'林间清气型', en:'Green Fresh', icon:'🌿', wheel:'Fresh · Green 清新—青绿',
+    tag:'干净、自然、不爱甜腻的理性派',
+    quote:'你偏好刚揉碎的叶片、雨后草地那种不带糖味的清新。',
+    desc:'你偏好自然、克制、不刻意讨好的气质，对人工甜香敏感。青绿调呼应你理性、清爽、接近自然的一面：叶片、茶香、无花果与潮湿木苔，闻起来安静而有生机。你的香应该像走进一片刚下过雨的林子，干净、湿润、不甜。',
+    traits:['理性克制','亲近自然','不喜欢甜腻','审美干净','独立清醒','重视松弛感'],
+    notes:['无花果叶、绿茶、橡木苔、青草等青绿原料','湿润叶片与茶香的清苦感','可配少量柑橘提亮、木质收束','低甜、低动物感，干净为主'],
+    avoid:['奶油厚重的美食甜香','浓郁脂粉感的东方调','过重的树脂与焦糖感']
+  },
+  aquatic: {
+    name:'清冷海盐型', en:'Cool Aquatic', icon:'🌊', wheel:'Fresh · Water 清新—水生',
+    tag:'疏离、通透、自带距离感的人',
+    quote:'你身上有一层水汽，干净、凉，和人保持着舒服的距离。',
+    desc:'你偏冷静、抽离，不喜欢黏着和过度热情。水生调、海盐与洁净麝香呼应你清冷通透的气质：像海风、湿润的石头和刚洗净的织物，凉而不冰，留白很多。你的香适合带水汽感、洁净感，闻起来清爽疏离，又不至于太冷硬。',
+    traits:['情绪克制','有距离感','冷静通透','不爱喧闹','自我边界清晰','偏好洁净感'],
+    notes:['海盐、洁净麝香、海水与湿润石头感','水汽感与微凉的水生轮廓','可配少量木质或柑橘压住水感','干净、不甜、不厚重'],
+    avoid:['黏腻包裹的浓香','强烈动物感与皮革烟熏','热带水果堆叠的甜腻水汽']
+  },
+  woody: {
+    name:'沉稳木韵型', en:'Warm Woody', icon:'🪵', wheel:'Woody · 木质',
+    tag:'踏实、安静、有分量感的人',
+    quote:'你让人觉得可靠，像干燥的木头，安静却有自己的纹理。',
+    desc:'你成熟、稳定，不追求第一眼的花哨，更看重质感和耐闻度。木质调呼应你沉静、有定力的一面：雪松、檀香、香根草与沉香，干燥、笃定、贴肤。你的香需要有骨架和余韵，不必冲人，但要越留越稳。',
+    traits:['沉稳可靠','内心笃定','重质感','耐得住安静','不浮夸','有主见'],
+    notes:['雪松、檀香、香根草、沉香等木质主体','干燥木屑与泥土般的草根气息','可配少量辛料或树脂增暖','后半段绵长贴肤，有骨架'],
+    avoid:['浮甜单薄的花果水香','过分甜腻的奶油美食调','缺乏层次的人工合成木质感']
+  },
+  amber: {
+    name:'暖脂琥珀型', en:'Amber Embrace', icon:'🟠', wheel:'Amber (Oriental) · 琥珀东方',
+    tag:'温暖、包容、让人想靠近的人',
+    quote:'你给人一种被包裹的暖意，气息里有树脂、辛料和肌肤感。',
+    desc:'你待人温和、有包容力，喜欢温暖、有拥抱感的氛围。琥珀与暖辛料调呼应你温润、绵长、贴近肌肤的一面：树脂、乳香、豆蔻与蜂蜜般的甜，暖而不腻。你的香像一件柔软的针织衫，让人安心想靠近。',
+    traits:['温和包容','有亲和力','念旧重感情','喜欢温暖氛围','贴肤感强','情绪稳定'],
+    notes:['琥珀、乳香、劳丹脂、豆蔻与黑胡椒等暖辛料','树脂般的温润贴肤感','蜂蜜与香草般的柔和暖意','可配木质收束，避免过甜'],
+    avoid:['过冷过硬的水生青绿','尖锐提神的爆炸柑橘','一味清冷、毫无温度的皂感香']
+  },
+  gourmand: {
+    name:'甜心丰腴型', en:'Gourmand Sweet', icon:'🍯', wheel:'Gourmand · 美食（现代延伸）',
+    tag:'丰沛、有食欲感、情绪外放的人',
+    quote:'你不排斥甜，甚至喜欢那种让人联想到食物、温暖和愉悦的气息。',
+    desc:'你性格鲜活、享受生活，审美偏丰盈饱满。美食调呼应你热情、有甜感、让人愉悦的一面：香草、咖啡、零陵香豆、可可与坚果，暖甜有层次。你的香可以浓郁一些，但最好有木质或辛料压住糖感，避免一味发腻。',
+    traits:['热情外放','享受生活','有甜感','情绪饱满','偏爱浓郁','亲和力强'],
+    notes:['香草、咖啡、零陵香豆、可可、坚果等美食原料','甜润丰腴、带烘焙暖意','建议配木质/辛料平衡甜度','后半段可转为贴肤的温暖甜'],
+    avoid:['一味清冷、毫无甜感的极简香','过于寡淡的水生青绿','纯苦涩、干燥到发闷的烟熏']
+  },
+  smoky: {
+    name:'深色沉烟型', en:'Smoky Depth', icon:'🔥', wheel:'Dry Woods / Leather · 干木皮革烟熏',
+    tag:'有个性、有故事感、不走甜白路线的人',
+    quote:'你身上有暗色的锋芒，熏香、皮革与余烬让你显得有距离、有层次。',
+    desc:'你有主见、不随大流，接受甚至偏爱有个性、有反差的气息。烟熏与皮革调呼应你深沉、带故事感的一面：熏香、桦木烟、皮革与燃尽的余烬，暗而不闷。你的香可以有锋芒，但建议保留一点木质或树脂打底，不至于太冷硬。',
+    traits:['个性鲜明','有反差感','不爱随大流','审美大胆','有故事感','坚持自我'],
+    notes:['熏香、桦木焦油、皮革、余烬等烟熏原料','暗色树脂与皮革的哑光质感','可配沉香或木质增加纵深','带有辛暖底色，避免纯焦苦'],
+    avoid:['柔弱甜白的少女花香','干净到发飘的水感皂香','缺乏骨架的轻浮果香']
+  }
+};
+
+// 价格三档：lux 贵款 1800+，mid 一般 300–1800，cheap 平价 300 以下。
+// 价格为常见正装规格参考价（容量 + 人民币）；留香为大众口碑公认区间（官方一般只标浓度，不标小时）；香调表为常见公开结构。
+const TIERS = [
+  { key:'lux', label:'贵款', range:'1800 元以上' },
+  { key:'mid', label:'一般', range:'300–1800 元' },
+  { key:'cheap', label:'平价', range:'300 元以下' }
+];
+
+const PICKS = {
+  citrus: {
+    lux: [
+      { name:'橙花油 Neroli Portofino', brand:'Tom Ford', desc:'贵价经典柑橘白花，清亮带皂感，明亮不甜腻。', longevity:'4–5 小时', price:'50ml ¥2,300', top:'佛手柑、柠檬、苦橙', mid:'橙花、茉莉、薰衣草', base:'琥珀、白麝香' },
+      { name:'佛手柑 22 Bergamote 22', brand:'Le Labo', desc:'实验室风格的锐利佛手柑，混少量白花与木质，干净利落。', longevity:'3–5 小时', price:'50ml ¥1,880', top:'佛手柑、葡萄柚', mid:'橙花、白色花香', base:'雪松、白麝香' },
+      { name:'阿玛菲柑橘 Mandarino di Amalfi', brand:'Tom Ford', desc:'明亮橘子与姜花，阳光感十足的豪华柑橘。', longevity:'3–5 小时', price:'50ml ¥2,300', top:'橘子、柠檬、姜', mid:'橙花、姜花', base:'雪松、白麝香' }
+    ],
+    mid: [
+      { name:'赤霞橘光 Orange Sanguine', brand:'欧珑 Atelier Cologne', desc:'血橙与苦橙皮，鲜甜清爽，贴肤果味柑橘。', longevity:'3–5 小时', price:'30ml ¥380', top:'血橙、苦橙', mid:'茉莉、粉红胡椒', base:'雪松、檀香' },
+      { name:'青柠罗勒与柑橘', brand:'Jo Malone 祖玛珑', desc:'青柠罗勒的药草柑橘，轻快中性，适合夏天。', longevity:'3–4 小时', price:'30ml ¥680', top:'青柠、柑橘', mid:'罗勒、百里香', base:'白麝香、雪松' },
+      { name:'克罗尼亚 Colonia', brand:'Acqua di Parma 帕尔玛之水', desc:'意大利经典古龙，柑橘薰衣草玫瑰的干净绅士感。', longevity:'3–5 小时', price:'100ml ¥1,080', top:'佛手柑、柠檬', mid:'薰衣草、玫瑰', base:'雪松、麝香' }
+    ],
+    cheap: [
+      { name:'CK One', brand:'Calvin Klein 凯文克莱', desc:'柠檬佛手柑混菠萝草本，干净中性的经典柑橘入门。', longevity:'2–3 小时', price:'100ml ¥168', top:'柠檬、佛手柑、菠萝', mid:'铃兰、茉莉、玫瑰', base:'绿茶、雪松、麝香' },
+      { name:'经典古龙 Echt Kölnisch Wasser', brand:'4711', desc:'百年古龙水，柠檬橙花苦橙叶，极淡极干净。', longevity:'2–3 小时', price:'100ml ¥119', top:'柠檬、橙皮', mid:'橙花、苦橙叶', base:'麝香、雪松' },
+      { name:'风之恋 L\'Eau par Kenzo', brand:'Kenzo 高田贤三', desc:'柑橘薄荷带雪碧感，清爽通透的中性夏日香。', longevity:'2–4 小时', price:'30ml ¥198', top:'柠檬、薄荷', mid:'水生花、绿叶', base:'雪松、麝香' }
+    ]
+  },
+  floral: {
+    lux: [
+      { name:'白麂皮 White Suede', brand:'Tom Ford', desc:'白茶玫瑰混麂皮麝香，柔粉高级的贴肤花香。', longevity:'5–6 小时', price:'50ml ¥2,300', top:'白茶、藏红花', mid:'玫瑰、橙花', base:'麂皮、麝香、檀香' },
+      { name:'玫瑰 31 Rose 31', brand:'Le Labo', desc:'胡椒包裹的粗犷玫瑰，带木质乳香，中性不柔弱。', longevity:'6–8 小时', price:'50ml ¥1,880', top:'胡椒、丁香', mid:'玫瑰、天竺葵', base:'雪松、乳香、麝香' },
+      { name:'红 540 Baccarat Rouge 540', brand:'MFK 弗朗西斯·库尔吉安', desc:'藏红花茉莉混雪松龙涎，华丽扩散的花香木质。', longevity:'8–10 小时', price:'70ml ¥2,080', top:'藏红花、柚子', mid:'茉莉、鸢尾', base:'雪松、龙涎香、木质' }
+    ],
+    mid: [
+      { name:'蓝风铃 Wild Bluebell', brand:'Jo Malone 祖玛珑', desc:'风铃草白桃水汽淡花香，轻盈少女感。', longevity:'3–4 小时', price:'30ml ¥680', top:'风铃草、露珠', mid:'柿子、白桃', base:'白麝香' },
+      { name:'之水玫瑰 Eau Rose', brand:'Diptyque 蒂普提克', desc:'荔枝玫瑰带绿叶，清新柔嫩的写实玫瑰。', longevity:'4–5 小时', price:'50ml ¥620', top:'荔枝、黑加仑', mid:'玫瑰、牡丹', base:'麝香、雪松' },
+      { name:'花市 Flower Market', brand:'Maison Margiela 复刻系列', desc:'复刻花市捧花，玫瑰牡丹铃兰叠绿叶。', longevity:'4–5 小时', price:'100ml ¥880', top:'绿叶、青果', mid:'玫瑰、牡丹、铃兰', base:'白麝香' }
+    ],
+    cheap: [
+      { name:'第五大道 5th Avenue', brand:'Elizabeth Arden 雅顿', desc:'馥郁白花玫瑰，温文尔雅的经典入门女香。', longevity:'3–4 小时', price:'30ml ¥129', top:'橙花、紫罗兰', mid:'玫瑰、茉莉、丁香', base:'檀香、麝香、香草' },
+      { name:'粉红宝贝', brand:'Tous 桃丝熊', desc:'树莓葡萄柚混樱花牡丹，少女体香感花果香。', longevity:'3–4 小时', price:'100ml ¥269', top:'树莓、葡萄柚', mid:'樱花、牡丹', base:'白麝香' },
+      { name:'柔粉玫瑰', brand:'Adopt', desc:'玫瑰荔枝柔粉花香，甜淡贴肤，平价日常。', longevity:'2–4 小时', price:'30ml ¥109', top:'玫瑰、荔枝', mid:'牡丹、铃兰', base:'麝香' }
+    ]
+  },
+  green: {
+    lux: [
+      { name:'香根草 46 Vetiver 46', brand:'Le Labo', desc:'干燥香根草混木质琥珀，沉稳中性的草木绿。', longevity:'5–7 小时', price:'50ml ¥1,880', top:'柠檬、香根草', mid:'天竺葵、丁香', base:'雪松、香根草、琥珀' },
+      { name:'水中影 L\'Ombre dans L\'Eau', brand:'Diptyque 蒂普提克', desc:'黑醋栗叶玫瑰水绿，带凉意的阴影花香青绿。', longevity:'4–6 小时', price:'50ml ¥620', top:'黑醋栗叶、柠檬', mid:'玫瑰、水芹', base:'麝香、橡木苔' },
+      { name:'尼罗河花园 Un Jardin sur le Nil', brand:'Hermès 爱马仕', desc:'芒果番茄叶菖蒲，青绿带果味的花园水感。', longevity:'5–6 小时', price:'100ml ¥1,500', top:'芒果、番茄叶', mid:'菖蒲、莲花', base:'香根草、乳香' }
+    ],
+    mid: [
+      { name:'无花果茶 Thé Infusé Figuier', brand:'欧珑 Atelier Cologne', desc:'无花果叶混茶叶，干燥清苦的青绿气息。', longevity:'3–5 小时', price:'30ml ¥380', top:'无花果叶、柠檬', mid:'茶叶、无花果', base:'雪松、麝香' },
+      { name:'鼠尾草与海盐', brand:'Jo Malone 祖玛珑', desc:'草本鼠尾草海盐矿物，干净中性的木质青绿。', longevity:'3–4 小时', price:'30ml ¥680', top:'海盐、鼠尾草', mid:'海藻、矿物', base:'橡木苔、麝香' },
+      { name:'希腊无花果 Philosykos', brand:'Diptyque 蒂普提克', desc:'无花果叶青无花果椰子，绿意成熟的无花果香。', longevity:'3–5 小时', price:'50ml ¥620', top:'无花果叶、青无花果', mid:'无花果、椰子', base:'雪松、木质' }
+    ],
+    cheap: [
+      { name:'暖棉 Clean Cotton', brand:'Clean 克霖', desc:'柠檬苹果混棉花皂感，干净柔软的青绿皂香。', longevity:'2–4 小时', price:'60ml ¥199', top:'柠檬、苹果', mid:'铃兰、棉花', base:'白麝香、木质' },
+      { name:'薄荷柠檬古龙', brand:'4711', desc:'薄荷柠檬草本古龙，冰凉提神的淡青绿。', longevity:'2–3 小时', price:'100ml ¥119', top:'薄荷、柠檬', mid:'草本、绿叶', base:'麝香' },
+      { name:'青草绿叶', brand:'Adopt', desc:'揉碎青草绿叶，清淡自然，不甜。', longevity:'2–4 小时', price:'30ml ¥109', top:'青草、绿叶', mid:'鼠尾草、薄荷', base:'麝香' }
+    ]
+  },
+  aquatic: {
+    lux: [
+      { name:'海岛之水 Virgin Island Water', brand:'Creed 恺芮得', desc:'青柠椰子姜花，热带海岛水汽的贵价水生。', longevity:'4–6 小时', price:'100ml ¥2,300', top:'青柠、椰子', mid:'姜、白花', base:'白麝香、木质' },
+      { name:'寰宇之水 Aqua Universalis', brand:'MFK 弗朗西斯·库尔吉安', desc:'佛手柑铃兰白麝香，通透皂感的极简水生。', longevity:'4–6 小时', price:'70ml ¥1,400', top:'佛手柑、柠檬', mid:'铃兰、白花', base:'雪松、麝香' },
+      { name:'橘绿之泉 Eau d\'Orange Verte', brand:'Hermès 爱马仕', desc:'橙皮混绿叶琥珀，干净利落的中性古典水生绿。', longevity:'3–5 小时', price:'100ml ¥1,230', top:'橙皮、柠檬', mid:'茉莉、绿叶', base:'琥珀、木质、麝香' }
+    ],
+    mid: [
+      { name:'一生之水 L\'Eau d\'Issey', brand:'三宅一生', desc:'莲花柚子百合，极简通透的淡水生花香。', longevity:'3–5 小时', price:'75ml ¥360', top:'莲花、柚子', mid:'百合、牡丹', base:'麝香、雪松' },
+      { name:'寄情水 Acqua di Giò', brand:'Giorgio Armani 阿玛尼', desc:'柠檬海盐茉莉海藻，清爽开阔的中性水香。', longevity:'4–6 小时', price:'100ml ¥780', top:'柠檬、海盐', mid:'茉莉、海藻', base:'雪松、麝香' },
+      { name:'水能量 Aqva', brand:'Bvlgari 宝格丽', desc:'柑橘海藻矿物，有活力的海洋调中性香。', longevity:'3–5 小时', price:'100ml ¥1,110', top:'柑橘、海藻', mid:'薰衣草、矿物', base:'雪松、琥珀' }
+    ],
+    cheap: [
+      { name:'冷水 Cool Water', brand:'Davidoff 大卫杜夫', desc:'薄荷海水薰衣草，冷感干净的经典平价水生。', longevity:'2–4 小时', price:'125ml ¥280', top:'薄荷、海水', mid:'薰衣草、茉莉', base:'雪松、麝香' },
+      { name:'CK Be', brand:'Calvin Klein 凯文克莱', desc:'水汽皂香混木质，温柔内敛的干净中性水香。', longevity:'2–4 小时', price:'100ml ¥139', top:'柑橘、薰衣草', mid:'茉莉、绿叶', base:'雪松、麝香' },
+      { name:'冰点 Ice Dive', brand:'Adidas 阿迪达斯', desc:'薄荷海洋运动清爽，便宜大碗的夏日水香。', longevity:'2–3 小时', price:'100ml ¥49', top:'薄荷、柑橘', mid:'海藻、草本', base:'雪松、麝香' }
+    ]
+  },
+  woody: {
+    lux: [
+      { name:'乌木沉香 Oud Wood', brand:'Tom Ford', desc:'沉香檀香混玫瑰香料，深沉有分量的木质树脂。', longevity:'8–10 小时', price:'50ml ¥2,300', top:'沉香、檀香', mid:'玫瑰、香料', base:'香根草、琥珀、木质' },
+      { name:'檀香 33 Santal 33', brand:'Le Labo', desc:'小豆蔻檀香雪松混皮革，粗犷中性的标志木质。', longevity:'8–10 小时', price:'50ml ¥1,880', top:'小豆蔻、纸莎草', mid:'檀香、雪松', base:'皮革、麝香、琥珀' },
+      { name:'拿破仑之水 Aventus', brand:'Creed 恺芮得', desc:'菠萝黑醋栗桦木苔藓，果味开场的成熟木质男香。', longevity:'8–10 小时', price:'100ml ¥3,500', top:'菠萝、黑醋栗', mid:'桦木、茉莉', base:'橡木苔、麝香、香草' }
+    ],
+    mid: [
+      { name:'檀道 Tam Dao', brand:'Diptyque 蒂普提克', desc:'雪松柏树檀香，沉静寺庙感的干燥木质。', longevity:'6–8 小时', price:'50ml ¥620', top:'雪松、柏树', mid:'檀香、玫瑰', base:'香根草、琥珀' },
+      { name:'檀香木 Sandalwood', brand:'Jo Malone 祖玛珑', desc:'柔和檀香茉莉雪松，安静贴肤的暖木质。', longevity:'4–6 小时', price:'30ml ¥680', top:'佛手柑', mid:'檀香、茉莉', base:'雪松、麝香' },
+      { name:'墨恋 Encre Noire', brand:'Lalique 莱俪', desc:'柏树香根草杜松，墨水般干燥冷峻的中性木质。', longevity:'5–7 小时', price:'100ml ¥299', top:'柏树、香根草', mid:'雪松、杜松', base:'香根草、麝香' }
+    ],
+    cheap: [
+      { name:'木质橙花油', brand:'Banana Republic 香蕉共和国', desc:'橙花混雪松香根草，洁净温润的平价木质。', longevity:'3–5 小时', price:'100ml ¥219', top:'橙花、柠檬', mid:'雪松、香根草', base:'麝香、木质' },
+      { name:'纯净男士', brand:'S.Oliver', desc:'柠檬辛香混草本木质，干净利落的入门男香。', longevity:'3–5 小时', price:'100ml ¥139', top:'柠檬、辛香', mid:'草本、木质', base:'雪松、麝香' },
+      { name:'雪松干燥木', brand:'Adopt', desc:'雪松柠檬混檀香，平价干净的基础木质。', longevity:'3–5 小时', price:'30ml ¥109', top:'雪松、柠檬', mid:'檀香、草本', base:'麝香、木质' }
+    ]
+  },
+  amber: {
+    lux: [
+      { name:'烟草香草 Tobacco Vanille', brand:'Tom Ford', desc:'烟草丁香香草干果，浓郁暖甜的东方美食木质。', longevity:'8–10 小时', price:'50ml ¥2,300', top:'烟草、丁香', mid:'香草、干果', base:'香木、琥珀、可可' },
+      { name:'夜色 Grand Soir', brand:'MFK 弗朗西斯·库尔吉安', desc:'安息香乳香没药琥珀，深沉贴肤的夜间东方调。', longevity:'8–10 小时', price:'70ml ¥1,800', top:'安息香、藏红花', mid:'乳香、没药', base:'琥珀、木质、麝香' },
+      { name:'史诗男士 Epic Man', brand:'Amouage 爱慕', desc:'辛香香料混树脂木质，浓烈考究的东方贵族香。', longevity:'8–10 小时', price:'50ml ¥1,900', top:'丁香、胡椒', mid:'乳香、肉桂', base:'檀香、木质、皮革' }
+    ],
+    mid: [
+      { name:'一千零一夜 Shalimar', brand:'Guerlain 娇兰', desc:'茉莉玫瑰混香草香脂，经典温暖的东方琥珀。', longevity:'6–8 小时', price:'30ml ¥930', top:'柠檬、佛手柑', mid:'茉莉、玫瑰', base:'香草、香脂、檀香' },
+      { name:'琥珀与薰衣草 Amber & Lavender', brand:'Jo Malone 祖玛珑', desc:'薰衣草琥珀香辛，暖柔带草本的中性香。', longevity:'4–6 小时', price:'30ml ¥680', top:'薰衣草', mid:'琥珀、香辛', base:'麝香、木质' },
+      { name:'杜桑 Do Son', brand:'Diptyque 蒂普提克', desc:'橙花晚香玉茉莉，暖艳贴肤的花香东方。', longevity:'5–7 小时', price:'50ml ¥620', top:'橙花、粉红胡椒', mid:'晚香玉、茉莉', base:'麝香、木质' }
+    ],
+    cheap: [
+      { name:'探寻旅者 Explorer', brand:'Montblanc 万宝龙', desc:'烟熏菠萝混木质琥珀，成熟沉稳的入门东方男香。', longevity:'4–6 小时', price:'100ml ¥980', top:'菠萝、辛香', mid:'木质、香料', base:'琥珀、麝香、雪松' },
+      { name:'自信男士 Bottled', brand:'Hugo Boss 雨果博斯', desc:'苹果丁香混肉桂檀香，暖柔干净的琥珀木质。', longevity:'4–6 小时', price:'100ml ¥259', top:'苹果、丁香', mid:'草本、肉桂', base:'檀香、木质、麝香' },
+      { name:'蜂蜜树脂', brand:'Adopt', desc:'香草琥珀混肉桂，平价暖甜包裹感。', longevity:'3–5 小时', price:'30ml ¥109', top:'香草、琥珀', mid:'肉桂、蜂蜜', base:'麝香、木质' }
+    ]
+  },
+  gourmand: {
+    lux: [
+      { name:'苹果白兰地 Apple Brandy', brand:'Kilian 凯利安', desc:'苹果肉桂焦糖混木质，贵价美食果香。', longevity:'7–9 小时', price:'50ml ¥2,200', top:'苹果、肉桂', mid:'苹果花、焦糖', base:'木质、香草' },
+      { name:'烟草香草 Tobacco Vanille', brand:'Tom Ford', desc:'烟草香草可可干果，丰腴浓郁的甜暖木质美食（与琥珀型共享）。', longevity:'8–10 小时', price:'50ml ¥2,300', top:'烟草、丁香', mid:'香草、干果', base:'可可、香木' },
+      { name:'致命香草 Vanille Fatale', brand:'Tom Ford', desc:'香草零陵香豆混皮革树脂，成熟厚重的甜暖美食。', longevity:'8–10 小时', price:'50ml ¥3,000', top:'香草、藏红花', mid:'零陵香豆、干果', base:'皮革、木质、树脂' }
+    ],
+    mid: [
+      { name:'黑鸦片 Black Opium', brand:'YSL 圣罗兰', desc:'咖啡橙花香草，浓郁甜暖的美食东方女香。', longevity:'6–8 小时', price:'50ml ¥920', top:'咖啡、橙花', mid:'香草、白花', base:'琥珀、木质' },
+      { name:'壁炉火光 By the Fireplace', brand:'Maison Margiela 复刻系列', desc:'丁香栗木香草烟熏，围炉暖甜的美食木质。', longevity:'5–7 小时', price:'100ml ¥880', top:'丁香、橙皮', mid:'栗木、香草', base:'烟熏木质、麝香' },
+      { name:'同名女士 Miu Miu', brand:'Miu Miu 缪缪', desc:'梨铃兰茉莉香草，柔和甜润的花果美食感。', longevity:'4–6 小时', price:'50ml ¥1,190', top:'梨、铃兰', mid:'茉莉、玫瑰', base:'香草、麝香' }
+    ],
+    cheap: [
+      { name:'崇高时代 Sublime Epoque', brand:'Zara', desc:'青葡萄晚香玉混白花，水灵甜润的花果美食香。', longevity:'3–5 小时', price:'80ml ¥229', top:'葡萄、梨', mid:'晚香玉、白花', base:'香草、麝香' },
+      { name:'圣代冰淇淋', brand:'Anna Sui 安娜苏', desc:'草莓蜜桃混奶油小苍兰，少女感果味甜香。', longevity:'3–4 小时', price:'30ml ¥179', top:'草莓、蜜桃', mid:'奶油、小苍兰', base:'香草、麝香' },
+      { name:'香草甜品', brand:'Adopt', desc:'香草奶油焦糖，直白甜润的平价美食香。', longevity:'2–4 小时', price:'30ml ¥109', top:'香草、奶油', mid:'焦糖、坚果', base:'麝香' }
+    ]
+  },
+  smoky: {
+    lux: [
+      { name:'皮革 28 Cuir 28', brand:'Le Labo', desc:'醛香皮革鸢尾混木质，哑光高级的中性皮革。', longevity:'6–8 小时', price:'50ml ¥1,880', top:'醛香、柑橘', mid:'皮革、鸢尾', base:'木质、麝香' },
+      { name:'乔治勋爵的悲剧 Lord George', brand:'Penhaligon\'s 潘海利根', desc:'白兰地辛香皮革蜂蜜，张扬有故事的兽首烟熏。', longevity:'6–8 小时', price:'75ml ¥2,200', top:'白兰地、辛香', mid:'皮革、蜂蜜', base:'木质、树脂' },
+      { name:'乌木沉香 Oud Wood', brand:'Tom Ford', desc:'沉香檀香混烟熏树脂，厚重有纵深的暗色木质烟熏（与木质型共享）。', longevity:'8–10 小时', price:'50ml ¥2,300', top:'沉香、檀香', mid:'香料、玫瑰', base:'香根草、树脂、木质' }
+    ],
+    mid: [
+      { name:'爵士俱乐部 Jazz Club', brand:'Maison Margiela 复刻系列', desc:'烟草朗姆肉桂皮革，酒吧烟熏感的中性美食皮革。', longevity:'5–7 小时', price:'100ml ¥880', top:'烟草、柠檬皮', mid:'朗姆、肉桂', base:'皮革、木质、香草' },
+      { name:'黑琥珀与姜百合', brand:'Jo Malone 祖玛珑', desc:'姜粉红胡椒黑琥珀百合，深沉暖暗的中性香。', longevity:'4–6 小时', price:'30ml ¥680', top:'姜、粉红胡椒', mid:'黑琥珀、百合', base:'檀香、麝香' },
+      { name:'柔润皮革 Cuir Beluga', brand:'Diptyque 蒂普提克', desc:'香柠檬皮革鸢尾安息香，柔润安静的高级皮革。', longevity:'5–7 小时', price:'50ml ¥1,500', top:'香柠檬', mid:'皮革、鸢尾', base:'安息香、麝香' }
+    ],
+    cheap: [
+      { name:'脏话 Dirty English', brand:'John Varvatos 约翰·瓦维托斯', desc:'皮革烟草混辛香，雅痞暗色的入门烟熏男香。', longevity:'4–6 小时', price:'125ml ¥269', top:'皮革、辛香', mid:'烟草、香料', base:'木质、树脂' },
+      { name:'熏香树脂', brand:'Adopt', desc:'乳香没药熏烟，暗暖缭绕的平价熏香调。', longevity:'3–5 小时', price:'30ml ¥109', top:'乳香、没药', mid:'树脂、辛料', base:'木质、麝香' },
+      { name:'余烬烟草', brand:'Adopt', desc:'烟草桦木余烬，焦苦沉稳的平价烟熏。', longevity:'3–5 小时', price:'30ml ¥109', top:'烟草、桦木', mid:'香料、干果', base:'木质、树脂' }
+    ]
+  }
+};
+
+const QUESTIONS = [
+  { g:'场景回忆', q:'闭上眼睛，最让你安心的一个气味画面是——', o:[
+    { t:'刚剥开的橘子皮，指尖溅出清亮果香', f:'citrus', s:'floral' },
+    { t:'一大束带露的鲜花，柔软馥郁', f:'floral', s:'gourmand' },
+    { t:'雨后草地和揉碎的叶片，湿润干净', f:'green', s:'aquatic' },
+    { t:'海边吹来的风，带着盐粒和水汽', f:'aquatic', s:'woody' }
+  ]},
+  { g:'场景回忆', q:'童年记忆里最怀念的味道更接近——', o:[
+    { t:'夏天汽水和果皮切开的酸味', f:'citrus', s:'green' },
+    { t:'奶奶衣柜里晒过的花布袋', f:'floral', s:'amber' },
+    { t:'乡下院子里的草木和泥土', f:'green', s:'woody' },
+    { t:'雨后潮湿的石阶和青苔', f:'aquatic', s:'green' }
+  ]},
+  { g:'场景回忆', q:'如果选一个地方待一下午，你最想去——', o:[
+    { t:'阳光充足的水果摊或早餐店', f:'citrus', s:'gourmand' },
+    { t:'开满花的院子或温室', f:'floral', s:'green' },
+    { t:'安静的木工房，闻得到干燥木屑', f:'woody', s:'green' },
+    { t:'傍晚的篝火旁，余烬还没熄', f:'smoky', s:'amber' }
+  ]},
+  { g:'场景回忆', q:'你最想被哪种气味包围——', o:[
+    { t:'刚洗过、晒过太阳的干净织物', f:'aquatic', s:'citrus' },
+    { t:'温热的牛奶、蜂蜜和烤坚果', f:'gourmand', s:'amber' },
+    { t:'干燥的书本和旧木头', f:'woody', s:'smoky' },
+    { t:'一支慢慢燃尽的熏香', f:'smoky', s:'amber' }
+  ]},
+  { g:'场景回忆', q:'旅行时最让你记住一座城市的，往往是——', o:[
+    { t:'街头果汁和果皮的清爽味', f:'citrus', s:'aquatic' },
+    { t:'花店、香料店和沿街的花束', f:'floral', s:'amber' },
+    { t:'山林、茶园或公园的草木气', f:'green', s:'woody' },
+    { t:'老城木质、皮革和烟熏的旧气息', f:'smoky', s:'woody' }
+  ]},
+  { g:'场景回忆', q:'最能唤起你放松感的画面是——', o:[
+    { t:'清晨推开窗，空气凉而透亮', f:'citrus', s:'aquatic' },
+    { t:'捧着一杯热饮，暖手又暖心', f:'gourmand', s:'amber' },
+    { t:'一个人待在安静的木质空间里', f:'woody', s:'green' },
+    { t:'花瓣落了一地的安静花园', f:'floral', s:'green' }
+  ]},
+  { g:'场景回忆', q:'你更偏爱哪种天气里的空气——', o:[
+    { t:'晴朗干爽，风一吹就清醒', f:'citrus', s:'woody' },
+    { t:'阴天湿润，万物都带着水汽', f:'aquatic', s:'green' },
+    { t:'深秋干燥，落叶和木屑的味道', f:'woody', s:'smoky' },
+    { t:'夜晚有暖意，灯光像被树脂包住', f:'amber', s:'gourmand' }
+  ]},
+  { g:'场景回忆', q:'想象一处让你想拍照记录的气味角落，它是——', o:[
+    { t:'一筐新鲜柑橘和绿植', f:'citrus', s:'green' },
+    { t:'摆满香辛料和干果的暖色柜子', f:'amber', s:'gourmand' },
+    { t:'皮革沙发与旧书架的角落', f:'smoky', s:'woody' },
+    { t:'插满白花的玻璃瓶', f:'floral', s:'aquatic' }
+  ]},
+
+  { g:'心情情绪', q:'此刻你的身体，更接近哪种状态——', o:[
+    { t:'有点混沌，想要一个清醒的锚点', f:'citrus', s:'green' },
+    { t:'绷了很久，想被温柔包裹', f:'floral', s:'amber' },
+    { t:'疲惫但还有事要做，需要一口气重启', f:'woody', s:'smoky' },
+    { t:'情绪发闷，想被一阵凉风吹透', f:'aquatic', s:'citrus' }
+  ]},
+  { g:'心情情绪', q:'最近你的内心底色更像——', o:[
+    { t:'想重新充满能量，等待一个触发点', f:'citrus', s:'gourmand' },
+    { t:'想找回内心的平静', f:'green', s:'woody' },
+    { t:'想被好好对待，有些委屈没说出口', f:'floral', s:'gourmand' },
+    { t:'想把脑子清空重来，需要一次重置', f:'smoky', s:'aquatic' }
+  ]},
+  { g:'心情情绪', q:'低落时，什么气味最能安慰你——', o:[
+    { t:'一杯热咖啡或烘焙点心', f:'gourmand', s:'amber' },
+    { t:'淡淡的花香，像有人轻拍后背', f:'floral', s:'green' },
+    { t:'干燥木头和烟草般的安心感', f:'woody', s:'smoky' },
+    { t:'清洁感的水汽，像洗了把脸重新开始', f:'aquatic', s:'citrus' }
+  ]},
+  { g:'心情情绪', q:'兴奋起来时，你更像哪种气息——', o:[
+    { t:'跳脱明亮，一开口就有活力', f:'citrus', s:'gourmand' },
+    { t:'温柔浪漫，氛围很柔软', f:'floral', s:'amber' },
+    { t:'沉稳笃定，慢慢把事做成', f:'woody', s:'smoky' },
+    { t:'安静抽离，保持自己的节奏', f:'aquatic', s:'green' }
+  ]},
+  { g:'心情情绪', q:'压力大的时候，你倾向于——', o:[
+    { t:'换个环境，出去走走透透气', f:'green', s:'aquatic' },
+    { t:'找温暖的人待在一起，被照顾', f:'amber', s:'floral' },
+    { t:'独处复盘，把自己收拾利落', f:'woody', s:'citrus' },
+    { t:'来点浓烈有个性的东西释放一下', f:'smoky', s:'gourmand' }
+  ]},
+  { g:'心情情绪', q:'你最希望别人从你身上闻到的感觉是——', o:[
+    { t:'清爽利落，好接近', f:'citrus', s:'aquatic' },
+    { t:'温柔亲和，让人放松', f:'floral', s:'amber' },
+    { t:'可靠稳重，有分量', f:'woody', s:'smoky' },
+    { t:'神秘有个性，不容易被看透', f:'smoky', s:'amber' }
+  ]},
+  { g:'心情情绪', q:'哪种情绪是你最近更常有的——', o:[
+    { t:'想清醒、想行动，不想拖延', f:'citrus', s:'woody' },
+    { t:'柔软敏感，容易被细节打动', f:'floral', s:'green' },
+    { t:'平和内敛，不太想对外界表态', f:'green', s:'woody' },
+    { t:'渴望暖意和归属感', f:'amber', s:'gourmand' }
+  ]},
+  { g:'心情情绪', q:'直觉上，你现在最缺的是——', o:[
+    { t:'一个清醒的开始，重新出发', f:'citrus', s:'green' },
+    { t:'深度的休息，灵魂层面的松下来', f:'amber', s:'floral' },
+    { t:'突破边界的勇气，想冲一把', f:'smoky', s:'woody' },
+    { t:'通透感，把杂事和情绪都清空', f:'aquatic', s:'green' }
+  ]},
+
+  { g:'性格社交', q:'朋友眼里，你更接近哪种人——', o:[
+    { t:'反应快、话题多的活跃派', f:'citrus', s:'floral' },
+    { t:'细心体贴的照顾者', f:'floral', s:'amber' },
+    { t:'话不多但很有主见的稳当人', f:'woody', s:'smoky' },
+    { t:'随性自然，不爱社交客套的人', f:'green', s:'aquatic' }
+  ]},
+  { g:'性格社交', q:'在聚会里，你通常——', o:[
+    { t:'主动破冰，带动气氛', f:'citrus', s:'gourmand' },
+    { t:'和熟悉的人慢慢聊感情', f:'floral', s:'amber' },
+    { t:'找个角落安静观察全场', f:'woody', s:'smoky' },
+    { t:'待一会儿就想离开，回到自己的空间', f:'aquatic', s:'green' }
+  ]},
+  { g:'性格社交', q:'你更看重朋友的哪种特质——', o:[
+    { t:'开朗真诚，相处轻松', f:'citrus', s:'floral' },
+    { t:'温柔可靠，懂得共情', f:'amber', s:'floral' },
+    { t:'沉稳有原则，说到做到', f:'woody', s:'smoky' },
+    { t:'清爽独立，互不黏腻', f:'green', s:'aquatic' }
+  ]},
+  { g:'性格社交', q:'做决定时，你更依赖——', o:[
+    { t:'直觉和当下的清晰判断', f:'citrus', s:'green' },
+    { t:'感受和对方的情绪', f:'floral', s:'gourmand' },
+    { t:'经验和反复权衡后的稳妥', f:'woody', s:'amber' },
+    { t:'自我边界和冷静分析', f:'aquatic', s:'smoky' }
+  ]},
+  { g:'性格社交', q:'你更反感别人身上的哪种状态——', o:[
+    { t:'黏腻纠缠、反复拖泥带水', f:'citrus', s:'aquatic' },
+    { t:'粗糙粗暴、缺乏温柔', f:'floral', s:'green' },
+    { t:'浮夸轻浮、没有定力', f:'woody', s:'smoky' },
+    { t:'过度热情、边界不清', f:'green', s:'amber' }
+  ]},
+  { g:'性格社交', q:'你在团队里更适合扮演——', o:[
+    { t:'提出新想法、推进节奏的人', f:'citrus', s:'woody' },
+    { t:'协调关系、照顾大家感受的人', f:'floral', s:'amber' },
+    { t:'把事情落地、守住标准的人', f:'woody', s:'green' },
+    { t:'保持距离、给出独立判断的人', f:'aquatic', s:'smoky' }
+  ]},
+  { g:'性格社交', q:'别人评价你时，最常用到的词是——', o:[
+    { t:'阳光、利落、有活力', f:'citrus', s:'floral' },
+    { t:'柔软、贴心、好相处', f:'gourmand', s:'floral' },
+    { t:'踏实、安静、有深度', f:'smoky', s:'woody' },
+    { t:'干净、冷淡、有距离感', f:'aquatic', s:'green' }
+  ]},
+  { g:'性格社交', q:'你更愿意把时间花在——', o:[
+    { t:'新鲜有趣的体验和交流', f:'citrus', s:'gourmand' },
+    { t:'亲近的人之间的情感往来', f:'floral', s:'amber' },
+    { t:'自己的爱好和长期积累的事', f:'woody', s:'green' },
+    { t:'独处和恢复精力的空间', f:'green', s:'aquatic' }
+  ]},
+
+  { g:'气味偏好', q:'在味道上，你第一反应更喜欢——', o:[
+    { t:'明亮果味，带一点微酸', f:'citrus', s:'green' },
+    { t:'花瓣般的柔甜花香', f:'floral', s:'gourmand' },
+    { t:'茶叶和草木的清苦感', f:'green', s:'woody' },
+    { t:'烘焙出来的暖甜香气', f:'gourmand', s:'amber' }
+  ]},
+  { g:'气味偏好', q:'你对甜味的接受度是——', o:[
+    { t:'不爱甜，偏苦和清爽', f:'green', s:'citrus' },
+    { t:'可以接受淡淡的柔甜', f:'floral', s:'green' },
+    { t:'喜欢浓郁温暖的甜', f:'gourmand', s:'amber' },
+    { t:'偏爱辛暖厚重，不太吃糖感', f:'amber', s:'smoky' }
+  ]},
+  { g:'气味偏好', q:'你希望香水在身上的浓度是——', o:[
+    { t:'贴近肌肤，若有若无', f:'aquatic', s:'floral' },
+    { t:'温和日常，不打扰别人', f:'woody', s:'green' },
+    { t:'存在感明显，但不冲人', f:'amber', s:'gourmand' },
+    { t:'浓烈外放，有锋芒', f:'smoky', s:'woody' }
+  ]},
+  { g:'气味偏好', q:'最想先闻到的一种原料是——', o:[
+    { t:'拧开果皮溅出的精油', f:'citrus', s:'aquatic' },
+    { t:'夜间绽放的白花', f:'floral', s:'green' },
+    { t:'干燥的木屑与树根', f:'woody', s:'smoky' },
+    { t:'熏过的皮革与余烬', f:'smoky', s:'amber' }
+  ]},
+  { g:'气味偏好', q:'你更在意香水的哪一层——', o:[
+    { t:'开头立刻透亮的前调', f:'citrus', s:'aquatic' },
+    { t:'中段柔和的花香主题', f:'floral', s:'green' },
+    { t:'后半段贴肤的木质余韵', f:'woody', s:'amber' },
+    { t:'收尾留下的个性印记', f:'smoky', s:'gourmand' }
+  ]},
+  { g:'气味偏好', q:'哪种原料形态最吸引你——', o:[
+    { t:'新鲜多汁的果皮果肉', f:'citrus', s:'gourmand' },
+    { t:'柔软盛开的花瓣', f:'floral', s:'green' },
+    { t:'干燥的树木与根茎', f:'woody', s:'smoky' },
+    { t:'树脂、香料与烘焙物', f:'amber', s:'gourmand' }
+  ]},
+  { g:'气味偏好', q:'你觉得一支香更应该——', o:[
+    { t:'清爽提神，不留下负担', f:'aquatic', s:'citrus' },
+    { t:'温柔衬人，不抢风头', f:'floral', s:'green' },
+    { t:'沉稳耐闻，越久越有味道', f:'woody', s:'amber' },
+    { t:'有反差和辨识度，敢浓烈', f:'smoky', s:'gourmand' }
+  ]},
+  { g:'气味偏好', q:'挑香时，你更容易被哪种描述打动——', o:[
+    { t:'像海风、清晨、刚洗过的衣服', f:'aquatic', s:'green' },
+    { t:'像花束、拥抱、温柔的人', f:'floral', s:'amber' },
+    { t:'像旧书、森林、安静的空间', f:'woody', s:'green' },
+    { t:'像夜晚、炉火、有故事的人', f:'smoky', s:'amber' }
+  ]},
+
+  { g:'生活方式与场合', q:'日常通勤或上学，你更想要——', o:[
+    { t:'清爽不打扰的干净感', f:'citrus', s:'aquatic' },
+    { t:'温柔得体的亲和力', f:'floral', s:'amber' },
+    { t:'沉稳低调的质感', f:'woody', s:'green' },
+    { t:'有点个性、不撞香', f:'smoky', s:'woody' }
+  ]},
+  { g:'生活方式与场合', q:'夜晚出门约会或聚会，你更偏向——', o:[
+    { t:'轻快灵动，让人想靠近', f:'citrus', s:'floral' },
+    { t:'浪漫暖场，氛围柔软', f:'amber', s:'floral' },
+    { t:'成熟稳重，有分寸感', f:'woody', s:'amber' },
+    { t:'深色魅惑，有记忆点', f:'smoky', s:'gourmand' }
+  ]},
+  { g:'生活方式与场合', q:'夏天你更想穿哪种香——', o:[
+    { t:'凉感十足的水汽', f:'aquatic', s:'citrus' },
+    { t:'草本青绿的自然气', f:'green', s:'aquatic' },
+    { t:'明亮上扬的柑橘', f:'citrus', s:'green' },
+    { t:'暖甜包裹，不怕热天', f:'gourmand', s:'amber' }
+  ]},
+  { g:'生活方式与场合', q:'冬天你更想被哪种香裹住——', o:[
+    { t:'木质暖调，踏实干燥', f:'woody', s:'amber' },
+    { t:'树脂与甜暖的蜜感', f:'amber', s:'gourmand' },
+    { t:'柔暖的花香，不冷硬', f:'floral', s:'amber' },
+    { t:'烟熏皮革，暗而有力量', f:'smoky', s:'woody' }
+  ]},
+  { g:'生活方式与场合', q:'工作或学习时，身边的气味最好是——', o:[
+    { t:'提神清醒，帮我集中', f:'citrus', s:'green' },
+    { t:'安静专注，不抢注意力', f:'woody', s:'green' },
+    { t:'洁净通透，像开窗通风', f:'aquatic', s:'citrus' },
+    { t:'温暖安抚，让人放松下来', f:'amber', s:'floral' }
+  ]},
+  { g:'生活方式与场合', q:'休闲周末，你最常待的场景是——', o:[
+    { t:'去自然里走走，看植物看水', f:'green', s:'aquatic' },
+    { t:'窝在家里，配着热饮点心', f:'gourmand', s:'amber' },
+    { t:'逛花店、市集，感受氛围', f:'floral', s:'green' },
+    { t:'小酌或安静地待在夜色里', f:'smoky', s:'amber' }
+  ]},
+  { g:'生活方式与场合', q:'如果帮别人挑香，你会选——', o:[
+    { t:'百搭清爽，不容易出错', f:'citrus', s:'aquatic' },
+    { t:'温柔讨喜，男女都好接受', f:'floral', s:'amber' },
+    { t:'成熟有质感，耐闻不飘', f:'woody', s:'smoky' },
+    { t:'有辨识度，让人记住', f:'smoky', s:'amber' }
+  ]},
+  { g:'生活方式与场合', q:'你更喜欢的留香方式是——', o:[
+    { t:'淡，很快自然散去', f:'citrus', s:'aquatic' },
+    { t:'中等，贴近肌肤不张扬', f:'floral', s:'green' },
+    { t:'绵长贴肤，越留越稳', f:'woody', s:'amber' },
+    { t:'持久外放，走到哪都有存在感', f:'gourmand', s:'smoky' }
+  ]},
+
+  { g:'感官与身体状态', q:'哪种身体触感联想最让你舒服——', o:[
+    { t:'清凉干爽，不黏腻', f:'aquatic', s:'citrus' },
+    { t:'柔软丝滑，被贴着包裹', f:'floral', s:'gourmand' },
+    { t:'扎实温润，有分量感', f:'woody', s:'amber' },
+    { t:'哑光粗粝，有质感', f:'smoky', s:'woody' }
+  ]},
+  { g:'感官与身体状态', q:'你最喜欢的声音氛围是——', o:[
+    { t:'清晨的安静，空气很透', f:'citrus', s:'green' },
+    { t:'花瓣般柔和的背景音乐', f:'floral', s:'gourmand' },
+    { t:'壁炉木柴噼啪的声音', f:'woody', s:'smoky' },
+    { t:'海浪一遍遍拍岸的水声', f:'aquatic', s:'green' }
+  ]},
+  { g:'感官与身体状态', q:'在材质上，你更偏爱——', o:[
+    { t:'洗过的棉麻，干净透气', f:'green', s:'aquatic' },
+    { t:'丝绸或绒面，柔滑贴身', f:'floral', s:'gourmand' },
+    { t:'旧木头，纹理扎实', f:'woody', s:'green' },
+    { t:'做旧皮革，有使用痕迹', f:'smoky', s:'amber' }
+  ]},
+  { g:'感官与身体状态', q:'味觉上你更常被吸引的是——', o:[
+    { t:'酸鲜多汁的水果', f:'citrus', s:'floral' },
+    { t:'带花香的茶饮', f:'floral', s:'green' },
+    { t:'坚果与焙烤的木质香根感', f:'woody', s:'gourmand' },
+    { t:'焦糖、咖啡与可可', f:'gourmand', s:'smoky' }
+  ]},
+  { g:'感官与身体状态', q:'你的体温和气质更接近——', o:[
+    { t:'偏凉、清爽利落', f:'citrus', s:'aquatic' },
+    { t:'温润适中，有亲和力', f:'amber', s:'floral' },
+    { t:'干燥温热，安静笃定', f:'woody', s:'smoky' },
+    { t:'暖甜包裹，让人放松', f:'gourmand', s:'amber' }
+  ]},
+  { g:'感官与身体状态', q:'对浓烈香气，你的反应是——', o:[
+    { t:'喜欢淡而有层次的变化', f:'green', s:'floral' },
+    { t:'容易被浓香熏到，偏好清淡', f:'aquatic', s:'citrus' },
+    { t:'喜欢有厚度、能沉下来的气味', f:'woody', s:'amber' },
+    { t:'偏爱强烈、有个性的气味', f:'smoky', s:'gourmand' }
+  ]},
+  { g:'感官与身体状态', q:'早晨刚醒，你更需要——', o:[
+    { t:'一下子清醒过来', f:'citrus', s:'green' },
+    { t:'慢慢舒展，柔和进入状态', f:'floral', s:'green' },
+    { t:'沉稳地把自己收拾好', f:'woody', s:'aquatic' },
+    { t:'留一点余梦般的暖意', f:'amber', s:'gourmand' }
+  ]},
+  { g:'感官与身体状态', q:'彻底放松时，你的姿态是——', o:[
+    { t:'开窗吹风，透气放空', f:'aquatic', s:'green' },
+    { t:'蜷进软垫，被温暖包住', f:'gourmand', s:'amber' },
+    { t:'靠在木椅上看书发呆', f:'woody', s:'green' },
+    { t:'点上熏香，静坐一会儿', f:'smoky', s:'amber' }
+  ]},
+
+  { g:'审美与想象', q:'理想房间的配色更接近——', o:[
+    { t:'明亮白与暖橙黄', f:'citrus', s:'gourmand' },
+    { t:'柔粉与柔和花色', f:'floral', s:'amber' },
+    { t:'苔藓绿与原木色', f:'green', s:'woody' },
+    { t:'深蓝、黑与深棕', f:'smoky', s:'aquatic' }
+  ]},
+  { g:'审美与想象', q:'更打动你的艺术风格是——', o:[
+    { t:'明快鲜活的花果印象', f:'citrus', s:'floral' },
+    { t:'自然风景，有生机感', f:'green', s:'aquatic' },
+    { t:'沉稳静物，有木质感', f:'woody', s:'amber' },
+    { t:'暗色氛围，有烟熏电影感', f:'smoky', s:'woody' }
+  ]},
+  { g:'审美与想象', q:'如果把自己做成一张气味名片，它是——', o:[
+    { t:'一句话就能说清的清爽', f:'citrus', s:'green' },
+    { t:'一束温柔浪漫的花', f:'floral', s:'gourmand' },
+    { t:'有年轮感的一块木材', f:'woody', s:'smoky' },
+    { t:'一件有故事的旧物', f:'smoky', s:'amber' }
+  ]},
+  { g:'审美与想象', q:'最向往的度假地是——', o:[
+    { t:'阳光充足的果园或海滨小镇', f:'citrus', s:'aquatic' },
+    { t:'开满花的安静小镇', f:'floral', s:'green' },
+    { t:'森林与湖边，湿润安静', f:'green', s:'aquatic' },
+    { t:'有年代感的复古老城', f:'smoky', s:'amber' }
+  ]},
+  { g:'审美与想象', q:'你理解的香水更像是——', o:[
+    { t:'加分项，让人更有精神', f:'citrus', s:'floral' },
+    { t:'表达温柔和心意的方式', f:'floral', s:'amber' },
+    { t:'衬托质感与成熟度的底色', f:'woody', s:'green' },
+    { t:'塑造反差和记忆点的个性标签', f:'smoky', s:'gourmand' }
+  ]},
+  { g:'审美与想象', q:'哪种意象最像你本人——', o:[
+    { t:'一只刚剥开的鲜果', f:'citrus', s:'aquatic' },
+    { t:'一朵正在盛开的花', f:'floral', s:'green' },
+    { t:'穿过林间的一阵风', f:'green', s:'woody' },
+    { t:'将熄未熄的一捧余烬', f:'amber', s:'smoky' }
+  ]},
+  { g:'审美与想象', q:'给这支香选一个香水瓶，你选——', o:[
+    { t:'透明清亮的玻璃', f:'aquatic', s:'citrus' },
+    { t:'柔雾感的粉色瓶身', f:'floral', s:'gourmand' },
+    { t:'厚重木质或琥珀色瓶', f:'woody', s:'amber' },
+    { t:'深色、皮革质感的瓶', f:'smoky', s:'woody' }
+  ]},
+  { g:'审美与想象', q:'你想成为哪种氛围的人——', o:[
+    { t:'明亮、好接近', f:'citrus', s:'floral' },
+    { t:'温柔、被喜欢', f:'floral', s:'amber' },
+    { t:'安静、有分量', f:'woody', s:'green' },
+    { t:'独特、有深度', f:'smoky', s:'amber' }
+  ]},
+
+  { g:'当前用香', q:'你现在手头常喷（或最想喷）的香，更接近——', o:[
+    { t:'清亮的果皮柑橘，一喷就醒', f:'citrus', s:'green', sub:'citrus-zest' },
+    { t:'一束柔软的花香，温柔贴肤', f:'floral', s:'gourmand', sub:'floral-soft' },
+    { t:'干净的草木水汽，清爽不甜', f:'green', s:'aquatic', sub:'green-leaf' },
+    { t:'温暖厚重的树脂甜香', f:'amber', s:'gourmand', sub:'amber-oriental' }
+  ]},
+  { g:'当前用香', q:'你常用的香，在别人身上留下的印象更像——', o:[
+    { t:'清爽利落，好接近', f:'citrus', s:'aquatic', sub:'citrus-zest' },
+    { t:'温柔亲和，让人放松', f:'floral', s:'amber', sub:'floral-bouquet' },
+    { t:'安静有距离，不打扰别人', f:'aquatic', s:'green', sub:'aquatic-ozonic' },
+    { t:'沉稳有质感，耐闻不飘', f:'woody', s:'smoky', sub:'woods-dry' }
+  ]},
+  { g:'当前用香', q:'买香时，你最容易被哪种描述打动——', o:[
+    { t:'多汁果味，年轻有活力', f:'citrus', s:'gourmand', sub:'citrus-fruity' },
+    { t:'粉感柔雾，贴肤含蓄', f:'floral', s:'green', sub:'floral-soft' },
+    { t:'咖啡坚果般的焙烤暖香', f:'gourmand', s:'amber', sub:'gourmand-bean' },
+    { t:'皮革烟熏般的个性记忆点', f:'smoky', s:'woody', sub:'smoky-leather' }
+  ]},
+  { g:'当前用香', q:'你一般在什么情况下喷香水——', o:[
+    { t:'白天出门、通勤上学，清爽日常', f:'citrus', s:'aquatic', sub:'citrus-neroli' },
+    { t:'约会或聚会，想要氛围和浪漫', f:'floral', s:'amber', sub:'floral-oriental' },
+    { t:'秋冬夜晚，被暖香裹住', f:'amber', s:'woody', sub:'amber-woody' },
+    { t:'独处或做自己，来点有个性的', f:'smoky', s:'amber', sub:'smoky-incense' }
+  ]},
+  { g:'当前用香', q:'如果再囤一支，你最想补哪个方向——', o:[
+    { t:'海风与清水的凉感', f:'aquatic', s:'citrus', sub:'aquatic-marine' },
+    { t:'林间草木与茶香', f:'green', s:'woody', sub:'green-tea' },
+    { t:'甜品般愉悦的甜', f:'gourmand', s:'amber', sub:'gourmand-dessert' },
+    { t:'干燥木质与林地苔藓', f:'woody', s:'green', sub:'woods-mossy' }
+  ]},
+  { g:'当前用香', q:'你目前的用香经验更接近——', o:[
+    { t:'刚入门，喜欢清爽不踩雷的', f:'citrus', s:'green', sub:'citrus-zest' },
+    { t:'试过一些花香果香，偏爱柔美', f:'floral', s:'gourmand', sub:'floral-bouquet' },
+    { t:'有自己的偏好，会按心情挑木质琥珀', f:'woody', s:'amber', sub:'woods-creamy' },
+    { t:'玩得比较深，追求冷门有个性的', f:'smoky', s:'woody', sub:'smoky-tobacco' }
+  ]},
+
+  { g:'细分侧重', q:'同样是柑橘，你更偏哪一种——', o:[
+    { t:'尖锐提神的柠檬、香柠檬皮', f:'citrus', s:'green', sub:'citrus-zest' },
+    { t:'带橙花的通透白花感', f:'citrus', s:'floral', sub:'citrus-neroli' },
+    { t:'葡萄柚、红果的多汁甜', f:'citrus', s:'gourmand', sub:'citrus-fruity' },
+    { t:'干净水汽般的透明空气感', f:'aquatic', s:'citrus', sub:'aquatic-ozonic' }
+  ]},
+  { g:'细分侧重', q:'同样是花香，你更偏哪一种——', o:[
+    { t:'玫瑰茉莉组成的完整花束', f:'floral', s:'green', sub:'floral-bouquet' },
+    { t:'鸢尾粉感的柔雾贴肤', f:'floral', s:'gourmand', sub:'floral-soft' },
+    { t:'依兰暖辛的浓艳花香东方', f:'floral', s:'amber', sub:'floral-oriental' },
+    { t:'莲花睡莲的水汽花露', f:'aquatic', s:'floral', sub:'aquatic-lotus' }
+  ]},
+  { g:'细分侧重', q:'同样是青绿，你更偏哪一种——', o:[
+    { t:'揉碎青草叶片的湿润感', f:'green', s:'aquatic', sub:'green-leaf' },
+    { t:'鼠尾草、薰衣草的草药冷感', f:'green', s:'woody', sub:'green-herbal' },
+    { t:'绿茶、无花果茶的回甘', f:'green', s:'gourmand', sub:'green-tea' },
+    { t:'苔藓林地的西普层次', f:'woody', s:'green', sub:'woods-mossy' }
+  ]},
+  { g:'细分侧重', q:'同样是水生，你更偏哪一种——', o:[
+    { t:'海盐海藻的咸湿开阔', f:'aquatic', s:'woody', sub:'aquatic-marine' },
+    { t:'臭氧、洁净织物的透明感', f:'aquatic', s:'citrus', sub:'aquatic-ozonic' },
+    { t:'莲花水汽白花的柔润清凉', f:'aquatic', s:'floral', sub:'aquatic-lotus' },
+    { t:'柠檬果皮的透亮清爽', f:'citrus', s:'green', sub:'citrus-neroli' }
+  ]},
+  { g:'细分侧重', q:'同样是木质，你更偏哪一种——', o:[
+    { t:'檀香雪松的奶润贴肤', f:'woody', s:'amber', sub:'woods-creamy' },
+    { t:'香根草、干雪松的冷峻骨架', f:'woody', s:'smoky', sub:'woods-dry' },
+    { t:'橡木苔、广藿香的苔藓西普', f:'woody', s:'green', sub:'woods-mossy' },
+    { t:'乳香树脂的轻暖包覆', f:'amber', s:'woody', sub:'amber-soft' }
+  ]},
+  { g:'细分侧重', q:'同样是琥珀暖香，你更偏哪一种——', o:[
+    { t:'乳香、暖麝香的轻透柔东方', f:'amber', s:'floral', sub:'amber-soft' },
+    { t:'香草、树脂的浓郁经典琥珀', f:'amber', s:'gourmand', sub:'amber-oriental' },
+    { t:'檀香、广藿香的深沉木质东方', f:'amber', s:'woody', sub:'amber-woody' },
+    { t:'咖啡、零陵香豆的焙烤暖厚', f:'gourmand', s:'amber', sub:'gourmand-bean' }
+  ]},
+  { g:'细分侧重', q:'同样是美食甜香，你更偏哪一种——', o:[
+    { t:'香草、焦糖、蜂蜜的甜品甜', f:'gourmand', s:'amber', sub:'gourmand-dessert' },
+    { t:'咖啡、坚果、可可的烘焙豆香', f:'gourmand', s:'smoky', sub:'gourmand-bean' },
+    { t:'梨、桃、椰香的轻甜果香', f:'gourmand', s:'floral', sub:'gourmand-fruity' },
+    { t:'依兰暖甜的花香东方', f:'floral', s:'amber', sub:'floral-oriental' }
+  ]},
+  { g:'细分侧重', q:'同样是暗色个性香，你更偏哪一种——', o:[
+    { t:'皮革、麂皮的哑光粗犷', f:'smoky', s:'woody', sub:'smoky-leather' },
+    { t:'乳香、没药的熏香缭绕', f:'smoky', s:'amber', sub:'smoky-incense' },
+    { t:'烟草、桦木焦油的余烬焦苦', f:'smoky', s:'woody', sub:'smoky-tobacco' },
+    { t:'干木冷屑的冷峻骨架', f:'woody', s:'smoky', sub:'woods-dry' }
+  ]},
+  { g:'细分侧重', q:'早上推开窗，你最想闻到的第一缕气息是——', o:[
+    { t:'刚切开的果皮精油', f:'citrus', s:'green', sub:'citrus-zest' },
+    { t:'带露的花瓣', f:'floral', s:'green', sub:'floral-bouquet' },
+    { t:'雨后的草地叶片', f:'green', s:'aquatic', sub:'green-leaf' },
+    { t:'海边吹来的咸风', f:'aquatic', s:'woody', sub:'aquatic-marine' }
+  ]},
+  { g:'细分侧重', q:'晚上回家，你身上更想留下的余韵是——', o:[
+    { t:'柔软贴肤的粉花香', f:'floral', s:'gourmand', sub:'floral-soft' },
+    { t:'暖树脂裹住的肌肤感', f:'amber', s:'floral', sub:'amber-oriental' },
+    { t:'干燥沉稳的木头味', f:'woody', s:'amber', sub:'woods-creamy' },
+    { t:'一缕将熄的熏烟', f:'smoky', s:'amber', sub:'smoky-incense' }
+  ]},
+  { g:'细分侧重', q:'选一种味道当你的"签名"，它应该——', o:[
+    { t:'明亮好记，一出现就认出是你', f:'citrus', s:'floral', sub:'citrus-fruity' },
+    { t:'温柔浪漫，让人想起你', f:'floral', s:'amber', sub:'floral-oriental' },
+    { t:'有骨架耐闻，越久越稳', f:'woody', s:'green', sub:'woods-dry' },
+    { t:'有反差和故事感', f:'smoky', s:'amber', sub:'smoky-tobacco' }
+  ]},
+  { g:'细分侧重', q:'你更被哪种原料吸引——', o:[
+    { t:'橙花与苦橙花的通透', f:'citrus', s:'floral', sub:'citrus-neroli' },
+    { t:'无花果叶与茶叶的清苦', f:'green', s:'gourmand', sub:'green-tea' },
+    { t:'海盐与矿物的凉冽', f:'aquatic', s:'woody', sub:'aquatic-marine' },
+    { t:'零陵香豆与坚果的暖甜', f:'gourmand', s:'amber', sub:'gourmand-bean' }
+  ]},
+  { g:'细分侧重', q:'一支香的后半段贴肤余韵，你更喜欢——', o:[
+    { t:'干净皂感与白麝香', f:'aquatic', s:'green', sub:'aquatic-ozonic' },
+    { t:'粉感鸢尾与柔花', f:'floral', s:'gourmand', sub:'floral-soft' },
+    { t:'檀香与雪松的温润木质', f:'woody', s:'amber', sub:'woods-creamy' },
+    { t:'香草与树脂的蜜暖', f:'amber', s:'floral', sub:'amber-soft' }
+  ]},
+  { g:'细分侧重', q:'天气转冷，你想往身上叠一层——', o:[
+    { t:'茶香与草木的安静', f:'green', s:'woody', sub:'green-herbal' },
+    { t:'广藿香与苔藓的林地感', f:'woody', s:'green', sub:'woods-mossy' },
+    { t:'树脂辛料的深沉暖木', f:'amber', s:'woody', sub:'amber-woody' },
+    { t:'皮革与余烬的厚重', f:'smoky', s:'woody', sub:'smoky-leather' }
+  ]},
+  { g:'细分侧重', q:'哪种气味最容易让你放松下来——', o:[
+    { t:'多汁果香的愉悦感', f:'gourmand', s:'citrus', sub:'gourmand-fruity' },
+    { t:'揉碎叶片的自然气', f:'green', s:'aquatic', sub:'green-leaf' },
+    { t:'奶润木头的安稳感', f:'woody', s:'amber', sub:'woods-creamy' },
+    { t:'暖甜甜品的被安慰感', f:'gourmand', s:'floral', sub:'gourmand-dessert' }
+  ]},
+  { g:'细分侧重', q:'最后一题：如果只能选一种气味伴随你，你选——', o:[
+    { t:'清亮通透，随时能重启', f:'citrus', s:'green', sub:'citrus-zest' },
+    { t:'温柔被喜欢，有花的气息', f:'floral', s:'amber', sub:'floral-bouquet' },
+    { t:'安静有分量，像干燥的木头', f:'woody', s:'green', sub:'woods-dry' },
+    { t:'独特有深度，像暗色的烟', f:'smoky', s:'amber', sub:'smoky-incense' }
+  ]}
+];
+
+const state = { idx: 0, answers: new Array(QUESTIONS.length).fill(null) };
+const $ = (id) => document.getElementById(id);
+
+function showScreen(id) {
+  ['screenStart', 'screenQuiz', 'screenResult'].forEach((s) => $(s).classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.idx];
+  $('qGroup').textContent = q.g;
+  $('qNum').textContent = (state.idx + 1) + ' / ' + QUESTIONS.length;
+  $('qText').textContent = q.q;
+  $('progressFill').style.width = (state.idx / QUESTIONS.length * 100) + '%';
+  const box = $('options');
+  box.innerHTML = '';
+  q.o.forEach((opt, i) => {
+    const el = document.createElement('div');
+    el.className = 'opt' + (state.answers[state.idx] === i ? ' selected' : '');
+    const radio = document.createElement('div');
+    radio.className = 'opt-radio';
+    const title = document.createElement('div');
+    title.className = 'opt-title';
+    title.textContent = opt.t;
+    el.appendChild(radio);
+    el.appendChild(title);
+    el.addEventListener('click', () => {
+      state.answers[state.idx] = i;
+      [...box.children].forEach((c, ci) => c.classList.toggle('selected', ci === i));
+      $('btnNext').disabled = false;
+    });
+    box.appendChild(el);
+  });
+  $('btnBack').style.visibility = state.idx === 0 ? 'hidden' : 'visible';
+  $('btnNext').disabled = state.answers[state.idx] === null;
+  $('btnNext').textContent = state.idx === QUESTIONS.length - 1 ? '查看我的香调人格 →' : '继续';
+}
+
+function scoreProfile() {
+  const v = Object.fromEntries(FAMILIES.map((f) => [f, 0]));
+  const sv = {};
+  QUESTIONS.forEach((q, qi) => {
+    const ai = state.answers[qi];
+    if (ai === null) return;
+    const opt = q.o[ai];
+    v[opt.f] += 1;
+    if (opt.s) v[opt.s] += 0.4;
+    if (opt.sub) sv[opt.sub] = (sv[opt.sub] || 0) + 1;
+  });
+  return { v, sv };
+}
+
+function showResult() {
+  const { v, sv } = scoreProfile();
+  const sorted = [...FAMILIES].sort((a, b) => v[b] - v[a]);
+  const top = sorted[0];
+  const second = sorted[1];
+  const t = TYPES[top];
+  const max = Math.max(...FAMILIES.map((f) => v[f]), 1);
+
+  $('resBars').innerHTML = '';
+  [...FAMILIES].sort((a, b) => v[b] - v[a]).forEach((f) => {
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    const name = document.createElement('div');
+    name.className = 'b-name';
+    name.textContent = FAMILY_LABEL[f];
+    const track = document.createElement('div');
+    track.className = 'bar-track';
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill';
+    fill.style.width = (v[f] / max * 100) + '%';
+    track.appendChild(fill);
+    row.appendChild(name);
+    row.appendChild(track);
+    $('resBars').appendChild(row);
+  });
+
+  $('resIcon').textContent = t.icon;
+  $('resName').textContent = t.name;
+  $('resEn').textContent = t.en + (second ? ' · 副倾向：' + FAMILY_LABEL[second] : '');
+  $('resQuote').textContent = t.quote;
+  $('resDesc').textContent = t.desc;
+
+  $('resTraits').innerHTML = '';
+  t.traits.forEach((x) => { const s = document.createElement('span'); s.className = 'trait'; s.textContent = x; $('resTraits').appendChild(s); });
+
+  // 细分侧重：在主家族所属子类中按子类得分取最高
+  const subs = Object.keys(SUBS).filter((id) => SUBS[id].f === top)
+    .sort((a, b) => (sv[b] || 0) - (sv[a] || 0));
+  const subTop = subs[0];
+  const subAlt = (subs[1] && (sv[subs[1]] || 0) > 0) ? subs[1] : null;
+  const st = SUBS[subTop];
+  const subBox = $('resSub');
+  subBox.innerHTML = '';
+  const card = document.createElement('div');
+  card.className = 'sub-card';
+  const subHead = document.createElement('div');
+  subHead.className = 'sub-head';
+  const subName = document.createElement('span');
+  subName.className = 'sub-name';
+  subName.textContent = st.zh;
+  const subEn = document.createElement('span');
+  subEn.className = 'sub-en';
+  subEn.textContent = st.en;
+  subHead.appendChild(subName);
+  subHead.appendChild(subEn);
+  const subWheel = document.createElement('div');
+  subWheel.className = 'sub-wheel';
+  subWheel.textContent = '轮盘归属：' + t.wheel;
+  const subDesc = document.createElement('div');
+  subDesc.className = 'sub-desc';
+  subDesc.textContent = st.desc;
+  const subNotes = document.createElement('div');
+  subNotes.className = 'sub-notes';
+  st.notes.forEach((x) => { const n = document.createElement('span'); n.className = 'sub-note'; n.textContent = x; subNotes.appendChild(n); });
+  card.appendChild(subHead);
+  card.appendChild(subWheel);
+  card.appendChild(subDesc);
+  card.appendChild(subNotes);
+  if (subAlt) {
+    const alt = document.createElement('div');
+    alt.className = 'sub-alt';
+    alt.innerHTML = '';
+    const altB = document.createElement('b');
+    altB.textContent = '也可能贴近：';
+    alt.appendChild(altB);
+    alt.appendChild(document.createTextNode(SUBS[subAlt].zh + '（' + SUBS[subAlt].en + '）'));
+    card.appendChild(alt);
+  }
+  subBox.appendChild(card);
+
+  $('resNotes').innerHTML = '';
+  t.notes.forEach((x) => { const li = document.createElement('li'); li.textContent = x; $('resNotes').appendChild(li); });
+  $('resAvoid').innerHTML = '';
+  t.avoid.forEach((x) => { const li = document.createElement('li'); li.textContent = x; $('resAvoid').appendChild(li); });
+  // 匹配度前三类型，各按三档预算列出可点开的香氛卡片
+  const top3 = sorted.slice(0, 3);
+  const rankLabels = ['主类型', '次倾向', '第三倾向'];
+  const pickBox = $('resPicks');
+  pickBox.innerHTML = '';
+  top3.forEach((f, idx) => {
+    const pt = TYPES[f];
+    const wrap = document.createElement('div');
+    wrap.className = 'pick-type' + (idx === 0 ? ' open' : '');
+    const head = document.createElement('div');
+    head.className = 'pick-type-head';
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+    const ic = document.createElement('span');
+    ic.className = 'pick-type-icon';
+    ic.textContent = pt.icon;
+    const nm = document.createElement('span');
+    nm.className = 'pick-type-name';
+    nm.textContent = pt.name;
+    const rk = document.createElement('span');
+    rk.className = 'pick-type-rank';
+    rk.textContent = rankLabels[idx];
+    const arrow = document.createElement('span');
+    arrow.className = 'pick-arrow';
+    arrow.textContent = '▾';
+    head.appendChild(ic);
+    head.appendChild(nm);
+    head.appendChild(rk);
+    head.appendChild(arrow);
+    const body = document.createElement('div');
+    body.className = 'pick-body';
+    const sub = document.createElement('div');
+    sub.className = 'pick-type-sub';
+    sub.textContent = pt.en + ' · ' + pt.wheel;
+    body.appendChild(sub);
+    TIERS.forEach((tier) => {
+      const list = (PICKS[f] && PICKS[f][tier.key]) || [];
+      if (!list.length) return;
+      const tl = document.createElement('div');
+      tl.className = 'tier-label';
+      const tlName = document.createElement('span');
+      tlName.textContent = tier.label;
+      const tlRange = document.createElement('span');
+      tlRange.className = 'tier-range';
+      tlRange.textContent = tier.range;
+      tl.appendChild(tlName);
+      tl.appendChild(tlRange);
+      const grid = document.createElement('div');
+      grid.className = 'pick-grid';
+      list.forEach((p) => {
+        const card = document.createElement('button');
+        card.className = 'pick-card';
+        card.type = 'button';
+        const cn = document.createElement('div');
+        cn.className = 'pc-name';
+        cn.textContent = p.name;
+        const cb = document.createElement('div');
+        cb.className = 'pc-brand';
+        cb.textContent = p.brand;
+        const cd = document.createElement('div');
+        cd.className = 'pc-desc';
+        cd.textContent = p.desc;
+        card.appendChild(cn);
+        card.appendChild(cb);
+        card.appendChild(cd);
+        card.addEventListener('click', () => openModal(p, tier));
+        grid.appendChild(card);
+      });
+      body.appendChild(tl);
+      body.appendChild(grid);
+    });
+    wrap.appendChild(head);
+    wrap.appendChild(body);
+    const toggle = () => wrap.classList.toggle('open');
+    head.addEventListener('click', toggle);
+    head.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+    pickBox.appendChild(wrap);
+  });
+
+  $('progressFill').style.width = '100%';
+  showScreen('screenResult');
+  window.scrollTo(0, 0);
+}
+
+function openModal(p, tier) {
+  const body = $('modalBody');
+  body.innerHTML = '';
+  const brand = document.createElement('div');
+  brand.className = 'modal-brand';
+  brand.textContent = p.brand;
+  const name = document.createElement('div');
+  name.className = 'modal-name';
+  name.textContent = p.name;
+  const tag = document.createElement('div');
+  tag.className = 'modal-tier';
+  tag.textContent = tier.label + ' · ' + tier.range;
+  const desc = document.createElement('div');
+  desc.className = 'modal-desc';
+  desc.textContent = p.desc;
+  body.appendChild(brand);
+  body.appendChild(name);
+  body.appendChild(tag);
+  body.appendChild(desc);
+  [['留香时长', p.longevity], ['官方正装参考价', p.price]].forEach(([label, val]) => {
+    const row = document.createElement('div');
+    row.className = 'note-row';
+    const l = document.createElement('div');
+    l.className = 'nr-label';
+    l.textContent = label;
+    const v = document.createElement('div');
+    v.className = 'nr-val';
+    v.textContent = val;
+    row.appendChild(l);
+    row.appendChild(v);
+    body.appendChild(row);
+  });
+  [['前调', p.top], ['中调', p.mid], ['后调', p.base]].forEach(([label, val]) => {
+    const row = document.createElement('div');
+    row.className = 'note-row';
+    const l = document.createElement('div');
+    l.className = 'nr-label';
+    l.textContent = label;
+    const v = document.createElement('div');
+    v.className = 'nr-val';
+    v.textContent = val;
+    row.appendChild(l);
+    row.appendChild(v);
+    body.appendChild(row);
+  });
+  $('modalMask').hidden = false;
+}
+
+function closeModal() {
+  $('modalMask').hidden = true;
+}
+
+$('modalClose').addEventListener('click', closeModal);
+$('modalMask').addEventListener('click', (e) => { if (e.target === $('modalMask')) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+$('btnStart').addEventListener('click', () => { state.idx = 0; showScreen('screenQuiz'); renderQuestion(); });
+$('btnNext').addEventListener('click', () => {
+  if (state.answers[state.idx] === null) return;
+  if (state.idx === QUESTIONS.length - 1) { showResult(); return; }
+  state.idx++;
+  renderQuestion();
+  window.scrollTo(0, 0);
+});
+$('btnBack').addEventListener('click', () => {
+  if (state.idx > 0) { state.idx--; renderQuestion(); window.scrollTo(0, 0); }
+});
+$('btnRetry').addEventListener('click', () => {
+  state.idx = 0;
+  state.answers = new Array(QUESTIONS.length).fill(null);
+  showScreen('screenStart');
+});
+</script>
+</body>
+</html>
